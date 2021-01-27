@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record model="ir.module.category" id="module_category_residence">
+            <field name="name">Residence Management</field>
+            <field name="sequence">99</field>
+        </record>
+
+        <record id="residence_user" model="res.groups">
+            <field name="name">User</field>
+        </record>
+
+        <record id="residence_officer" model="res.groups">
+            <field name="name">Officer</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="category_id" ref="module_category_residence"/>
+        </record>
+
+        <record id="residence_admin" model="res.groups">
+            <field name="name">Admin</field>
+            <field name="implied_ids" eval="[(4, ref('base_residence.residence_officer'))]"/>
+            <field name="category_id" ref="module_category_residence"/>
+        </record>
+
+        <record id="base.user_admin" model="res.users">
+            <field name="groups_id" eval="[(4, ref('base_residence.residence_admin'))]"/>
+        </record>
+
+        <!--Règles sur les enregistrements-->
+
+        <!--    LOT    -->
+
+        <record id="rule_residence_lot" model="ir.rule">
+            <field name="name">User can see their own lot</field>
+            <field name="model_id" ref="model_residence_lot"/>
+            <field name="groups" eval="[(4, ref('base_residence.residence_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="domain_force">
+                [('resident_ids.id', '=', user.partner_id.id)]
+            </field>
+        </record>
+
+        <!--    BADGE    -->
+
+        <record id="rule_res_partner_badge" model="ir.rule">
+            <field name="name">The user can see and modify his own badge</field>
+            <field name="model_id" ref="model_res_partner_badge"/>
+            <field name="groups" eval="[(4, ref('base_residence.residence_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <field name="domain_force">
+                [('lot_ids.id', 'in', user.partner_id.lot_ids.ids)]
+            </field>
+        </record>
+
+    </data>
+</odoo>

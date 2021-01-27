@@ -1,0 +1,107 @@
+<odoo>
+    <data>
+
+        <!-- Paperformat -->
+        <record model="report.paperformat" id="badge_paperformat">
+			<field name="name">Badge Paperformat</field>
+			<field name="format">custom</field>
+			<field name="page_height">89</field>
+			<field name="page_width">57</field>
+            <field name="orientation">Landscape</field>
+            <field name="margin_top">0</field>
+            <field name="margin_bottom">0</field>
+            <field name="margin_right">0</field>
+            <field name="margin_left">0</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">300</field>
+		</record>
+
+        <!-- Report -->
+        <report
+            id="resident_badge_report"
+            model="res.partner"
+            string="Badge"
+            report_type="qweb-pdf"
+            name="base_residence.resident_badge"
+            file="base_residence.resident_badge"
+            attachment="'badge-' + object.display_name + '-' + '-'.join([lot.name for lot in object.lot_ids]) + '.pdf'"
+            print_report_name="'badge-' + object.display_name + '-' + '-'.join([lot.name for lot in object.lot_ids])"
+        />
+
+        <record id="resident_badge_report" model="ir.actions.report">
+            <field name="paperformat_id" ref="badge_paperformat"/>
+        </record>
+
+        <!-- Badge report templates -->
+        <template id="resident_badge_document">
+            <t t-call="web.basic_layout">
+                <t t-if="not company">
+                    <!-- Multicompany -->
+                    <t t-if="company_id">
+                        <t t-set="company" t-value="company_id"/>
+                    </t>
+                    <t t-elif="o and 'company_id' in o">
+                        <t t-set="company" t-value="o.company_id.sudo()"/>
+                    </t>
+                    <t t-else="else">
+                        <t t-set="company" t-value="res_company"/>
+                    </t>
+                </t>
+
+                <div class="row main-content">
+                    <div class="col-6 center-v center-v1">
+                        <div class="profile-photo" t-att-style="'background-image: url(' + (image_data_uri(o.image_256) if o.image_256 else '/base/static/img/avatar_grey.png') + ')'"/>
+                    </div>
+                    <div class="col-6 center-v center-v2">
+                        <div class="resident-info">
+                            <h1 t-field="o.display_name" class="resident-name"/>
+                            <p class="resident-lots" t-esc="' - '.join(lot.display_name for lot in o.lot_ids)"></p>
+                        </div>
+                        <img t-att-src="image_data_uri(o.get_qr_code())" alt="Code"/>
+                        <p class="residence-name">Made With Love By Hazenfield • info@hazenfield.com</p>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="resident_badge">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="base_residence.resident_badge_document"/>
+                </t>
+            </t>
+        </template>
+
+        <!-- Report -->
+        <report
+            id="anonymous_badge_report"
+            model="res.partner.badge"
+            string="Badge"
+            report_type="qweb-pdf"
+            name="base_residence.anonymous_badge"
+            file="base_residence.anonymous_badge"
+            attachment="'badge-' + object.display_name + '-' + '-'.join([lot.name for lot in object.lot_ids]) + '.pdf'"
+            print_report_name="'badge-' + object.display_name + '-' + '-'.join([lot.name for lot in object.lot_ids])"
+        />
+
+        <record id="anonymous_badge_report" model="ir.actions.report">
+            <field name="paperformat_id" ref="badge_paperformat"/>
+        </record>
+
+        <template id="anonymous_badge">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="base_residence.resident_badge_document"/>
+                </t>
+            </t>
+        </template>
+
+        <template id="report_assets_common" name="badge_assets" inherit_id="web.report_assets_common">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" type="text/css" href="/base_residence/static/src/css/badge_report.css"/>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

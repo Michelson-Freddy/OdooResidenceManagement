@@ -1,0 +1,7 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_residence_lot_user,access.residence.lot.user,base_residence.model_residence_lot,base_residence.residence_user,1,0,0,0
+access_residence_lot_officer,access.residence.lot.officer,base_residence.model_residence_lot,base_residence.residence_officer,1,0,0,0
+access_residence_lot_admin,access.residence.lot.admin,base_residence.model_residence_lot,base_residence.residence_admin,1,1,1,1
+access_res_partner_badge_user,access.res.partner.badge.user,base_residence.model_res_partner_badge,base_residence.residence_user,1,0,0,0
+access_res_partner_badge_officer,access.res.partner.badge.officer,base_residence.model_res_partner_badge,base_residence.residence_officer,1,1,1,0
+access_res_partner_badge_admin,access.res.partner.badge.admin,base_residence.model_res_partner_badge,base_residence.residence_admin,1,1,1,1

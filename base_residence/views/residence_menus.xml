@@ -1,0 +1,13 @@
+<odoo>
+    <data>
+
+        <menuitem name="Residence Management" id="residence_root_menu" sequence="50"/>
+		<menuitem name="Lots" id="residence_lots_root_menu" sequence="10" parent="residence_root_menu"/>
+		<menuitem name="Lots" id="residence_lots_menu" sequence="10" parent="residence_lots_root_menu" action="residence_lot_action"/>
+		<menuitem name="Residents" id="residents_menu" sequence="20" parent="residence_lots_root_menu" action="residents_action"/>
+		<menuitem name="Non-residents" id="non_residents_menu" sequence="21" parent="residence_lots_root_menu" action="non_residents_action"/>
+		<menuitem name="Badges" id="badges_menu" sequence="30" parent="residence_lots_root_menu" action="badges_action"/>
+		<menuitem name="Generate Badges" id="badges_generator_menu" sequence="999" parent="residence_lots_root_menu" action="badges_generator_wizard_action"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,64 @@
+.row.main-content {
+    height: 223mm;
+    background-image: url('/base_residence/static/src/img/matte-black.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.center-v {
+    height: 223mm;
+}
+
+.center-v1 {
+    padding: 20mm;
+}
+
+.center-v2 {
+    padding-top: 20mm;
+    padding-right: 10mm;
+    text-align: right;
+    color: white;
+}
+
+.center-v2 img {
+    margin-bottom: 5mm;
+    max-width: 50%;
+    height: auto;
+}
+
+div.profile-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+div.resident-info {
+    height: 50%;
+}
+
+h1.resident-name {
+    font-size: 12mm;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 1px solid white;
+    padding-bottom: 5mm;
+}
+
+h1.resident-name.smaller {
+    font-size: 12mm;
+}
+
+p.resident-lots {
+    font-size: 10mm;
+    text-align: center;
+}
+
+p.residence-name {
+    font-size: 6mm;
+    margin-top: 0;
+    padding-top: 0;
+}

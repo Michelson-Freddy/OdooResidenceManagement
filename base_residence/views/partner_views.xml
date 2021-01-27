@@ -1,0 +1,198 @@
+<odoo>
+    <data>
+
+        <!-- Search -->
+        <record id="view_res_partner_filter" model="ir.ui.view">
+            <field name="name">res.partner.search.view.lot</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="lot_ids" string="Lots" filter_domain="[('lot_ids.name', '=', self)]" />
+                    <filter name="has_image_filter" string="Has image" domain="[('image_1920', '!=', False)]"/>
+                </field>
+            </field>
+        </record>
+
+        <!-- Kanban -->
+        <record id="res_partner_kanban_view" model="ir.ui.view">
+            <field name="name">res.partner.kanban.view.lot</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+            <field name="arch" type="xml">
+                <field name="display_name" position="after">
+                    <field name="lot_ids" widget="many2many_tags" />
+                </field>
+                <xpath expr="//templates/t/div/div/ul/li[last()]" position="after">
+                    <li t-if="record.lot_ids.raw_value"><field name="lot_ids"/></li>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Tree -->
+        <record id="view_partner_tree" model="ir.ui.view">
+            <field name="name">res.partner.tree.view.lot</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree"/>
+            <field name="arch" type="xml">
+                <field name="display_name" position="after">
+                    <field name="lot_ids" widget="many2many_tags" />
+                </field>
+            </field>
+        </record>
+
+        <!-- Form -->
+        <record id="view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form.view.lot</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+                <field name="parent_id" position="before">
+                    <field name="lot_ids" widget="many2many_tags" placeholder="Lots" />
+                </field>
+                <field name="type" position="before">
+                    <field name="is_resident"/>
+                    <field name="is_bureau"/>
+                </field>
+                <notebook position="inside">
+                    <page string="Badges">
+                        <field name="badge_ids">
+                            <tree editable="bottom" decoration-danger="is_active == False" decoration-success="is_active == True">
+                                <field name="display_name"/>
+                                <field name="paid"/>
+                                <field name="type"/>
+                                <field name="is_active" invisible="1"/>
+                                <button name="toggle_active" string="Activate/Deactivate" type="object"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+		<!-- Action -->
+		<record id="residents_action" model="ir.actions.act_window">
+			<field name="name">Residents</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">res.partner</field>
+			<field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('is_company', '=', False), ('is_resident', '=', True)]</field>
+            <field name="context">{'default_is_resident': True, 'default_is_company': False}</field>
+		</record>
+
+		<!-- Action -->
+		<record id="non_residents_action" model="ir.actions.act_window">
+			<field name="name">Non-residents</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">res.partner</field>
+			<field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('is_company', '=', False), ('is_resident', '=', False)]</field>
+            <field name="context">{'default_is_resident': False, 'default_is_company': False}</field>
+		</record>
+
+        <!-- Search -->
+        <record id="view_partner_badge_filter" model="ir.ui.view">
+            <field name="name">res.partner.badge.search.view</field>
+            <field name="model">res.partner.badge</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="code" select="1"/>
+                    <field name="partner_id"/>
+                    <field name="lot_ids" string="Lots" filter_domain="[('lot_ids.name', '=', self)]" />
+                    <filter string="Temporary" name="temporary_badges" domain="[('type', '=', 'temporary')]"/>
+                    <filter string="Residents" name="residents_badges" domain="[('type', '=', 'resident')]"/>
+                    <filter string="Not Printed" name="unprinted_badge" domain="[('state', '=', 'draft')]"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Tree -->
+        <record id="view_partner_badge_tree" model="ir.ui.view">
+            <field name="name">res.partner.badge.tree.view</field>
+            <field name="model">res.partner.badge</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom" decoration-danger="is_active == False" decoration-success="is_active == True">
+                    <field name="partner_id"/>
+                    <field name="display_name"/>
+                    <field name="is_active" invisible="1"/>
+                    <field name="paid"/>
+                    <field name="state"/>
+                    <field name="type"/>
+                    <field name="lot_ids" widget="many2many_tags"/>
+                    <button name="toggle_active" string="Activate/Deactivate" type="object"/>
+                </tree>
+            </field>
+        </record>
+
+		<!-- Action -->
+		<record id="badges_action" model="ir.actions.act_window">
+			<field name="name">Badges</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">res.partner.badge</field>
+			<field name="view_mode">tree</field>
+		</record>
+
+        <!-- Form -->
+        <record id="badge_wizard_form" model="ir.ui.view">
+            <field name="name">res.partner.badge.wizard.form.view</field>
+            <field name="model">res.partner.badge.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Create temporary badges">
+                    <sheet>
+                        <field name="line_ids">
+                            <tree editable="bottom">
+                                <field name="lot_ids" widget="many2many_tags"/>
+                                <field name="qty"/>
+                            </tree>
+                        </field>
+                        <footer>
+                            <button name="generate_temporary_badges" string="Generate temporary badges" type="object" class="btn-primary"/>
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        </footer> 
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+		<!-- Action -->
+		<record id="badges_generator_wizard_action" model="ir.actions.act_window">
+			<field name="name">Badges Generator</field>
+			<field name="type">ir.actions.act_window</field>
+			<field name="res_model">res.partner.badge.wizard</field>
+			<field name="view_mode">form</field>
+			<field name="target">new</field>
+            <field name="view_id" ref="base_residence.badge_wizard_form"/>
+		</record>
+
+        <record model="ir.actions.server" id="action_set_badges_paid">
+            <field name="name">Mark as paid</field>
+            <field name="model_id" ref="base_residence.model_res_partner_badge"/>
+            <field name="binding_model_id" ref="base_residence.model_res_partner_badge"/>
+            <field name="state">code</field>
+            <field name="code">
+                records.set_paid()
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="action_set_badges_printed">
+            <field name="name">Mark as printed</field>
+            <field name="model_id" ref="base_residence.model_res_partner_badge"/>
+            <field name="binding_model_id" ref="base_residence.model_res_partner_badge"/>
+            <field name="state">code</field>
+            <field name="code">
+                records.write({'state': 'printed'})
+            </field>
+        </record>
+
+        <record model="ir.actions.server" id="action_make_badges_if_dont_have">
+            <field name="name">Make badges</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="binding_model_id" ref="base.model_res_partner"/>
+            <field name="state">code</field>
+            <field name="code">
+                records.make_badge_if_doesnt_have()
+            </field>
+        </record>
+
+    </data>
+</odoo>
